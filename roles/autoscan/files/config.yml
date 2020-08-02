@@ -45,10 +45,7 @@ targets:
   plex:
     - url: http://plex:3400 # URL of your Plex server
       database: /opt/plex/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db # Path to the Plex database file
-    #   token: XXXX # Plex API Token
-    #   rewrite:
-    #     from: /mnt/unionfs/Media/* # local file system
-    #     to: /data/$1 # path accessible by the Plex docker container (if applicable)
+      # token not required if plex pass ingfo filled in settings
 
   emby:
     # - url: http://emby:8096 # URL of your Emby server
