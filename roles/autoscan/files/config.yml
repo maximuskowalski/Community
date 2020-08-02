@@ -43,7 +43,7 @@ triggers:
 
 targets:
   plex:
-    - url: http://plex:3400 # URL of your Plex server
+    - url: http://plex:32400 # URL of your Plex server
       database: /opt/plex/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db # Path to the Plex database file
       # token not required if plex pass ingfo filled in settings
 
