@@ -31,17 +31,14 @@
     path: "/opt/autoscan/config.yml"
   register: config_asconfig
 
-- name: Do the following tasks when 'config.yml' does not exist.
-  block:
-    - name: Import 'config.json'
-    - name: Import autoscan.conf template
-      copy:
-        src: "config.yml"
-        dest: "/opt/autoscan/config.yml"
-        owner: "{{ user.name }}"
-        group: "{{ user.name }}"
-        mode: 0775
-        force: no
+- name: Import 'config.yml' if not exist.
+  copy:
+    src: "config.yml"
+    dest: "/opt/autoscan/config.yml"
+    owner: "{{ user.name }}"
+    group: "{{ user.name }}"
+    mode: 0775
+    force: no
   when: not config_asconfig.stat.exists
 
 - name: Create and start container
