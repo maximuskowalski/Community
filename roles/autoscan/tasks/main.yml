@@ -25,16 +25,17 @@
   file: "path={{ item }} state=directory mode=0775 owner={{ user.name }} group={{ user.name }}"
   with_items:
     - /opt/autoscan
+    - /opt/autoscan/app/
 
-- name: "Check if '/opt/autoscan/config.yml' exists"
+- name: "Check if '/opt/autoscan/app/config.yml' exists"
   stat:
-    path: "/opt/autoscan/config.yml"
+    path: "/opt/autoscan/app/config.yml"
   register: config_asconfig
 
 - name: Import 'config.yml' if not exist.
   copy:
     src: "config.yml"
-    dest: "/opt/autoscan/config.yml"
+    dest: "/opt/autoscan/app/config.yml"
     owner: "{{ user.name }}"
     group: "{{ user.name }}"
     mode: 0775
