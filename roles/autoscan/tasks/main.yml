@@ -26,35 +26,46 @@
   with_items:
     - /opt/autoscan
 
-- name: Import autoscan.conf template
-  copy:
-    src: "config.yml"
-    dest: "/opt/autoscan/config.yml"
-    owner: "{{ user.name }}"
-    group: "{{ user.name }}"
-    mode: 0775
-    force: no
+- name: "Check if '/opt/autoscan/config.yml' exists"
+  stat:
+    path: "/opt/autoscan/config.yml"
+  register: config_asconfig
+
+- name: Do the following tasks when 'config.yml' does not exist.
+  block:
+    - name: Import 'config.json'
+    - name: Import autoscan.conf template
+      copy:
+        src: "config.yml"
+        dest: "/opt/autoscan/config.yml"
+        owner: "{{ user.name }}"
+        group: "{{ user.name }}"
+        mode: 0775
+        force: no
+  when: not config_asconfig.stat.exists
 
 - name: Create and start container
   docker_container:
     name: autoscan
-    image: "cloudb0x/autoscan:latest"
+    image: "hotio/autoscan:latest"
     pull: yes
     env:
       TZ: "{{ tz }}"
       PUID: "{{ uid }}"
       PGID: "{{ gid }}"
-      DEBUG: "no"
-      AUTOSCAN_VERBOSITY: "0"
+      DEBUG: "yes"
+      AUTOSCAN_VERBOSITY: "3"
       VIRTUAL_HOST: "autoscan.{{ user.domain }}"
       VIRTUAL_PORT: "3030"
       LETSENCRYPT_HOST: "autoscan.{{ user.domain }}"
       LETSENCRYPT_EMAIL: "{{ user.email }}"
+      PLEX_LOGIN: "{{ plex.user }}"
+      PLEX_PASSWORD: "{{ plex.pass }}"
 
     volumes:
       - "/opt/autoscan:/config"
-      - "/opt/plex:/data/plex:ro"
-      - "/opt/emby:/data/emby:ro"
+      - "/opt/plex:/opt/plex:ro"
+      - "/opt/emby:/opt/emby:ro"
       - "/mnt:/mnt:ro"
     labels:
       "com.github.cloudbox.cloudbox_managed": "true"

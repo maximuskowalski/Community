@@ -43,15 +43,15 @@ triggers:
 
 targets:
   plex:
-    # - url: https://plex.domain.tld # URL of your Plex server
-    #   database: /opt/plex/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db # Path to the Plex database file
+    - url: http://plex:3400 # URL of your Plex server
+      database: /opt/plex/Library/Application Support/Plex Media Server/Plug-in Support/Databases/com.plexapp.plugins.library.db # Path to the Plex database file
     #   token: XXXX # Plex API Token
     #   rewrite:
     #     from: /mnt/unionfs/Media/* # local file system
     #     to: /data/$1 # path accessible by the Plex docker container (if applicable)
 
   emby:
-    # - url: https://emby.domain.tld # URL of your Emby server
+    # - url: http://emby:8096 # URL of your Emby server
     #   database: /opt/emby/data/library.db # Path to the Emby database file
     #   token: XXXX # Emby API Token
     #   rewrite:
