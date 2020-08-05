@@ -48,7 +48,7 @@
       #MAIL_URL: 'smtp://<mail_url>:25/?ignoreTLS=true&tls={rejectUnauthorized:false}'
       #MAIL_FROM: 'Wekan Notifications <noreply.wekan@mydomain.com>'
       WITH_API: true
-      BROWSER_POLICY_ENABLED: true
+      #BROWSER_POLICY_ENABLED: true
       TZ: "{{ tz }}"
       PUID: "{{ uid }}"
       PGID: "{{ gid }}"
