@@ -1,0 +1,81 @@
+#########################################################################
+# Title:            Cloudbox: MariaDB Role                              #
+# Author(s):        l3uddz, desimaniac                                  #
+# URL:              https://github.com/cloudbox/cloudbox                #
+# Docker Image(s):  quay.io/wekan/wekan:master                          #
+# --                                                                    #
+#         Part of the Cloudbox project: https://cloudbox.works          #
+#########################################################################
+#                   GNU General Public License v3.0                     #
+#########################################################################
+---
+- name: "Set DNS Record on CloudFlare"
+  include_role:
+    name: cloudflare-dns
+  vars:
+    subdomain: wekan
+  when: cloudflare_enabled
+
+- name: Create required directories
+  file: "path={{ item }} state=directory mode=0775 owner={{ user.name }} group={{ user.name }}"
+  with_items:
+    - /opt/wekan
+    - /opt/wekan/wekandb
+    - /opt/wekan/wekandbdump
+
+- name: mongo wekanDB Role
+  import_tasks: subtasks/wekandb.yml
+  when:
+    - (not continuous_integration)
+
+- name: "sleep for 30 seconds and continue"
+  wait_for: timeout=30
+
+- name: Stop and remove any existing containers
+  docker_container:
+    name: wekan
+    state: absent
+
+- name: Create and start wekan container
+  docker_container:
+    name: wekan
+    image: "quay.io/wekan/wekan:latest"
+    pull: yes
+    env:
+      MONGO_URL: mongodb://wekandb:27017/wekan
+      # ROOT_URL: http://localhost:3001
+      ROOT_URL: https://wekan.{{ user.domain }}
+      #MAIL_URL: 'smtp://<mail_url>:25/?ignoreTLS=true&tls={rejectUnauthorized:false}'
+      #MAIL_FROM: 'Wekan Notifications <noreply.wekan@mydomain.com>'
+      WITH_API: true
+      BROWSER_POLICY_ENABLED: true
+      TZ: "{{ tz }}"
+      PUID: "{{ uid }}"
+      PGID: "{{ gid }}"
+      VIRTUAL_HOST: "wekan.{{ user.domain }}"
+      VIRTUAL_PORT: 443
+      VIRTUAL_PROTO: https
+      LETSENCRYPT_HOST: "wekan.{{ user.domain }}"
+      LETSENCRYPT_EMAIL: "{{ user.email }}"
+      HTTPS_METHOD: noredirect
+
+    # depends_on:
+    #   - wekandb
+
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/opt/wekan/wekandb:/data/db"
+      - "/opt/wekan/wekandbdump:/dump"
+    ports:
+      # - 3001:8080
+      # - 80:80
+      # - 443:443
+    labels:
+      "com.github.cloudbox.cloudbox_managed": "true"
+    networks:
+      - name: cloudbox
+        aliases:
+          - wekan
+    purge_networks: yes
+    restart_policy: unless-stopped
+    state: started

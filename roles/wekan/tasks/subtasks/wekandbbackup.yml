@@ -1,0 +1,39 @@
+#########################################################################
+# Title:            Cloudbox: mongo wekanDB Role                              #
+# Author(s):        l3uddz, desimaniac                                  #
+# URL:              https://github.com/cloudbox/cloudbox                #
+# Docker Image(s):  mongo:3.2.21                                 #
+# --                                                                    #
+#         Part of the Cloudbox project: https://cloudbox.works          #
+#########################################################################
+#                   GNU General Public License v3.0                     #
+#########################################################################
+---
+- name: Stop and remove any existing containers
+  docker_container:
+    name: wekandb
+    state: absent
+
+- name: mongo wekanDB Role
+  docker_container:
+    name: wekandb
+    image: "mongo:3.2.21"
+    pull: yes
+    command: mongod --smallfiles --oplogSize 128
+    networks:
+      - name: cloudbox
+        aliases:
+          - wekandb
+    published_ports:
+      - "127.0.0.1:27017:27017"
+
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/opt/wekan/wekandb:/data/db"
+      - "/opt/wekan/wekandbdump:/dump"
+    labels:
+      "com.github.cloudbox.cloudbox_managed": "true"
+
+    purge_networks: yes
+    restart_policy: unless-stopped
+    state: started
