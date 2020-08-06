@@ -42,12 +42,12 @@
     image: "quay.io/wekan/wekan:latest"
     pull: yes
     env:
-      MONGO_URL: mongodb://wekandb:27017/wekan
+      MONGO_URL: "mongodb://wekandb:27017/wekan"
       # ROOT_URL: http://localhost:3001
-      ROOT_URL: https://wekan.{{ user.domain }}
+      ROOT_URL: "https://wekan.{{ user.domain }}"
       #MAIL_URL: 'smtp://<mail_url>:25/?ignoreTLS=true&tls={rejectUnauthorized:false}'
       #MAIL_FROM: 'Wekan Notifications <noreply.wekan@mydomain.com>'
-      WITH_API: true
+      WITH_API: "true"
       BROWSER_POLICY_ENABLED: "true"
       TZ: "{{ tz }}"
       PUID: "{{ uid }}"
