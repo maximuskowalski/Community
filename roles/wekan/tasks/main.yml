@@ -48,16 +48,16 @@
       #MAIL_URL: 'smtp://<mail_url>:25/?ignoreTLS=true&tls={rejectUnauthorized:false}'
       #MAIL_FROM: 'Wekan Notifications <noreply.wekan@mydomain.com>'
       WITH_API: true
-      #BROWSER_POLICY_ENABLED: true
+      BROWSER_POLICY_ENABLED: "true"
       TZ: "{{ tz }}"
       PUID: "{{ uid }}"
       PGID: "{{ gid }}"
       VIRTUAL_HOST: "wekan.{{ user.domain }}"
-      VIRTUAL_PORT: 443
-      VIRTUAL_PROTO: https
+      VIRTUAL_PORT: "443"
+      VIRTUAL_PROTO: "https"
       LETSENCRYPT_HOST: "wekan.{{ user.domain }}"
       LETSENCRYPT_EMAIL: "{{ user.email }}"
-      HTTPS_METHOD: noredirect
+      HTTPS_METHOD: "noredirect"
 
     # depends_on:
     #   - wekandb
