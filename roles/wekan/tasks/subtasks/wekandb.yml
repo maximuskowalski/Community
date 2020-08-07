@@ -17,8 +17,12 @@
 - name: mongo wekanDB Role
   docker_container:
     name: wekandb
-    image: "mongo:3.2.21"
+    image: "mongo:latest"
     pull: yes
+    env:
+      TZ: "{{ tz }}"
+      PUID: "{{ uid }}"
+      PGID: "{{ gid }}"
     command: mongod --smallfiles --oplogSize 128
     networks:
       - name: cloudbox

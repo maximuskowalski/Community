@@ -53,14 +53,14 @@
       PUID: "{{ uid }}"
       PGID: "{{ gid }}"
       VIRTUAL_HOST: "wekan.{{ user.domain }}"
-      VIRTUAL_PORT: "443"
+      VIRTUAL_PORT: "8080"
       VIRTUAL_PROTO: "https"
       LETSENCRYPT_HOST: "wekan.{{ user.domain }}"
       LETSENCRYPT_EMAIL: "{{ user.email }}"
       HTTPS_METHOD: "noredirect"
 
-    # depends_on:
-    #   - wekandb
+    depends_on:
+      - wekandb
 
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
@@ -70,6 +70,8 @@
       # - 3001:8080
       # - 80:80
       # - 443:443
+    links:
+      - "wekan-db:db"
     labels:
       "com.github.cloudbox.cloudbox_managed": "true"
     networks:
