@@ -1,0 +1,86 @@
+#########################################################################
+# Title:            Community: astuto                                   #
+# Author(s):        Kowalski                                            #
+# URL:              https://github.com/Cloudbox/Community               #
+# Docker Image(s):  alextracy/astuto                                    #
+# --                                                                    #
+#         Part of the Cloudbox project: https://cloudbox.works          #
+#########################################################################
+#                   GNU General Public License v3.0                     #
+#########################################################################
+---
+- name: "Setting CloudFlare DNS Record"
+  include_role:
+    name: cloudflare-dns
+  vars:
+    record: astuto
+  when: cloudflare_enabled
+
+- name: Stop and remove any existing astuto container
+  docker_container:
+    name: astuto
+    state: absent
+
+- name: Stop and remove any existing postgress container
+  docker_container:
+    name: postgres
+    state: absent
+
+- name: Create astuto directories
+  file: "path={{ item }} state=directory mode=0775 owner={{ user.name }} group={{ user.name }}"
+  with_items:
+    - /opt/astuto/config
+    - /opt/astuto/db
+
+- name: Create and start postgres
+  docker_container:
+    name: postgres
+    image: postgres
+    pull: yes
+    published_ports:
+      - "127.0.0.1:8265:8265"
+    env:
+      TZ: "{{ tz }}"
+      PUID: "{{ uid }}"
+      PGID: "{{ gid }}"
+      POSTGRES_USER: "astuto"
+      POSTGRES_PASSWORD: "astuto"
+
+- name: "wait for 30 seconds and continue"
+  wait_for: timeout=30
+
+- name: Create and start container
+  docker_container:
+    name: astuto
+    image: alextracy/astuto
+    pull: yes
+    published_ports:
+      - "127.0.0.1:8265:8265"
+    env:
+      TZ: "{{ tz }}"
+      PUID: "{{ uid }}"
+      PGID: "{{ gid }}"
+      VIRTUAL_HOST: "astuto.{{ user.domain }}"
+      VIRTUAL_PORT: "3000"
+      LETSENCRYPT_HOST: "astuto.{{ user.domain }}"
+      LETSENCRYPT_EMAIL: "{{ user.email }}"
+      UPDATE: "0"
+      ENVIRONMENT: "production"
+      SECRET_KEY_BASE: "98CC6B97C85EF6FF5C3BC76BB04E4151AEE0BE973F322222290D002533EA8D67"
+      POSTGRES_USER: "astuto"
+      POSTGRES_PASSWORD: "astuto"
+      APP_NAME: "polokov"
+      SHOW_LOGO: "no"
+      POSTS_PER_PAGE: "15"
+      EMAIL_CONFIRMATION: "no"
+    volumes:
+      - "/opt/astuto/config:/astuto-isales-app"
+    labels:
+      "com.github.cloudbox.cloudbox_managed": "true"
+    networks:
+      - name: cloudbox
+        aliases:
+          - astuto
+    purge_networks: yes
+    restart_policy: unless-stopped
+    state: started
