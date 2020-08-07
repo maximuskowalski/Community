@@ -58,10 +58,6 @@
       LETSENCRYPT_HOST: "wekan.{{ user.domain }}"
       LETSENCRYPT_EMAIL: "{{ user.email }}"
       HTTPS_METHOD: "noredirect"
-
-    depends_on:
-      - wekandb
-
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/opt/wekan/wekandb:/data/db"
