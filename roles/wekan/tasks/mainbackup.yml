@@ -39,7 +39,7 @@
 - name: Create and start wekan container
   docker_container:
     name: wekan
-    image: "mquandalle/wekan:latest"
+    image: "quay.io/wekan/wekan:latest"
     pull: yes
     env:
       MONGO_URL: "mongodb://wekandb:27017/wekan"
@@ -48,11 +48,6 @@
       #MAIL_URL: 'smtp://<mail_url>:25/?ignoreTLS=true&tls={rejectUnauthorized:false}'
       #MAIL_FROM: 'Wekan Notifications <noreply.wekan@mydomain.com>'
       WITH_API: "true"
-      RICHER_CARD_COMMENT_EDITOR: "false"
-      SCROLLINERTIA: "0"
-      SCROLLAMOUNT: "auto"
-      CARD_OPENED_WEBHOOK_ENABLED: "false"
-      BIGEVENTS_PATTERN: "NONE"
       BROWSER_POLICY_ENABLED: "true"
       TZ: "{{ tz }}"
       PUID: "{{ uid }}"
@@ -62,13 +57,13 @@
       VIRTUAL_PROTO: "https"
       LETSENCRYPT_HOST: "wekan.{{ user.domain }}"
       LETSENCRYPT_EMAIL: "{{ user.email }}"
-      #HTTPS_METHOD: "noredirect"
+      HTTPS_METHOD: "noredirect"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/opt/wekan/wekandb:/data/db"
       - "/opt/wekan/wekandbdump:/dump"
     ports:
-      # - 8080:8080
+      # - 3001:8080
       # - 80:80
       # - 443:443
     links:
