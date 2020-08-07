@@ -18,6 +18,7 @@
     - { role: airsonic, tags: ["airsonic"] }
     - { role: alltube, tags: ["alltube"] }
     - { role: asshama, tags: ["asshama"] }
+    - { role: astuto, tags: ["astuto"] }
     - { role: bazarrx, tags: ["bazarrx"] }
     - { role: beets, tags: ["beets"] }
     - { role: bitwarden, tags: ["bitwarden"] }
