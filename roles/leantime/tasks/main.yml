@@ -1,0 +1,72 @@
+---
+- name: "Set DNS Record on CloudFlare"
+  include_role:
+    name: cloudflare-dns
+  vars:
+    record: leantime
+  when: cloudflare_enabled
+
+- name: Create leantime directories
+  file: "path={{ item }} state=directory mode=0775 owner={{ user.name }} group={{ user.name }}"
+  with_items:
+    - /opt/leantime/app
+    - /opt/leantime/mysql
+- name: Create and start container
+  docker_container:
+    name: mysql_leantime
+    image: "mysql:5.7"
+    pull: yes
+    env:
+      TZ: "{{ tz }}"    
+      MYSQL_ROOT_PASSWORD: '321.qwerty'
+      MYSQL_DATABASE: 'leantime'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: '321.qwerty'
+     ports:
+       - "3306:3306"
+     command: --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    volumes:
+      - "/opt/leantime/mysql:/var/lib/mysql"
+    labels:
+      "com.github.cloudbox.cloudbox_managed": "true"
+    networks:
+      - name: cloudbox
+        aliases:
+          - mysql_leantime
+    purge_networks: yes
+    restart_policy: unless-stopped
+
+- name: "Wait 30 seconds"
+  wait_for:
+    timeout: 30
+
+- name: Create and start leantime
+  docker_container:
+    name: leantime
+    image: "leantime/leantime:latest"
+    pull: yes
+    env:
+      LEAN_DB_HOST: "mysql_leantime"
+      LEAN_DB_USER: "admin"
+      LEAN_DB_PASSWORD: "321.qwerty"
+      LEAN_DB_DATABASE: "leantime"
+      TZ: "{{ tz }}"
+      PUID: "{{ uid }}"
+      PGID: "{{ gid }}"
+      VIRTUAL_HOST: "leantime.{{ user.domain }}"
+      VIRTUAL_PORT: "80"
+      LETSENCRYPT_HOST: "leantime.{{ user.domain }}"
+      LETSENCRYPT_EMAIL: "{{ user.email }}"
+    volumes:
+      - "/opt/leantime/app:/config:rw"
+      - "/opt/leantime/mysql:/var/lib/mysql"
+      - "/mnt:/mnt"
+    labels:
+      "com.github.cloudbox.cloudbox_managed": "true"
+    networks:
+      - name: cloudbox
+        aliases:
+          - leantime
+    purge_networks: yes
+    restart_policy: unless-stopped
+    state: started
