@@ -1,0 +1,60 @@
+version: "2"
+
+services:
+  wekandb:
+    image: mongo:latest
+    container_name: wekan-db
+    restart: always
+    command: mongod --oplogSize 128
+    networks:
+      - cloudbox
+    expose:
+      - 27017
+    volumes:
+      - /opt/wekan/wekandb:/data/db
+      - /opt/wekan/wekandbdump:/dump
+
+  wekan:
+    image: wekanteam/wekan
+    container_name: wekan
+    restart: always
+    networks:
+      - cloudbox
+    # ports:
+    #   # Docker outsideport:insideport. Do not add anything extra here.
+    #   # For example, if you want to have wekan on port 3001,
+    #   # use 3001:8080 . Do not add any extra address etc here, that way it does not work.
+    #   # remove port mapping if you use nginx reverse proxy, port 8080 is already exposed to cloudbox network
+    #   - 80:8080
+    environment:
+      - MONGO_URL=mongodb://wekandb:27017/wekan
+      - ROOT_URL=https://wekan.skyhole.monster #   <=== using only at same laptop/desktop where Wekan is installed
+      # - MAIL_URL=smtp://<mail_url>:25/?ignoreTLS=true&tls={rejectUnauthorized:false}
+      # - MAIL_FROM=Wekan Notifications <noreply.wekan@mydomain.com>
+      - WITH_API=true
+      - RICHER_CARD_COMMENT_EDITOR=false
+      - SCROLLINERTIA=0
+      - SCROLLAMOUNT=auto
+      - CARD_OPENED_WEBHOOK_ENABLED=false
+      - BIGEVENTS_PATTERN=NONE
+      - BROWSER_POLICY_ENABLED=true
+      ########
+      - TZ=Australia/Sydney
+      - PUID=1000
+      - PGID=1000
+      - VIRTUAL_HOST=wekan..skyhole.monster
+      - VIRTUAL_PORT=8080
+      - VIRTUAL_PROTO=https
+      - LETSENCRYPT_HOST=wekan.skyhole.monster
+      - LETSENCRYPT_EMAIL=barry@fartbox.party
+    depends_on:
+      - wekandb
+volumes:
+  wekandb:
+    driver: local
+  wekandbdump:
+    driver: local
+
+networks:
+  cloudbox:
+    driver: bridge

@@ -22,8 +22,8 @@
       MYSQL_DATABASE: 'leantime'
       MYSQL_USER: 'admin'
       MYSQL_PASSWORD: '321.qwerty'
-     ports:
-       - "3306:3306"
+    ports:
+      - "3306:3306"
      command: --character-set-server=utf8 --collation-server=utf8_unicode_ci
     volumes:
       - "/opt/leantime/mysql:/var/lib/mysql"

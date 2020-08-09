@@ -71,6 +71,7 @@
     - { role: komga, tags: ["komga"] }
     - { role: lazylibrarian, tags: ["lazylibrarian"] }
     - { role: leantime, tags: ["leantime"] }
+    - { role: listarr, tags: ["listarr"] }
     - { role: logarr, tags: ["logarr"] }
     - { role: mediabutler, tags: ["mediabutler"] }
     - { role: medusa, tags: ["medusa"] }
