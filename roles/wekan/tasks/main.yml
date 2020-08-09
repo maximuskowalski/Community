@@ -41,6 +41,8 @@
     name: wekan
     image: "mquandalle/wekan:latest"
     pull: yes
+    published_ports:
+      - "127.0.0.1:3003:8080"
     env:
       MONGO_URL: "mongodb://wekandb:27017/wekan"
       # ROOT_URL: http://localhost:3001
@@ -58,7 +60,7 @@
       PUID: "{{ uid }}"
       PGID: "{{ gid }}"
       VIRTUAL_HOST: "wekan.{{ user.domain }}"
-      VIRTUAL_PORT: "8080"
+      VIRTUAL_PORT: "3003"
       VIRTUAL_PROTO: "https"
       LETSENCRYPT_HOST: "wekan.{{ user.domain }}"
       LETSENCRYPT_EMAIL: "{{ user.email }}"
@@ -68,7 +70,7 @@
       - "/opt/wekan/wekandb:/data/db"
       - "/opt/wekan/wekandbdump:/dump"
     ports:
-      # - 8080:8080
+      - 3003:8080
       # - 80:80
       # - 443:443
     links:

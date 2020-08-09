@@ -22,14 +22,13 @@
     image: "ccatt601/listarr:latest"
     pull: yes
     published_ports:
-      - "127.0.0.1:31337:31337"
+      - "127.0.0.1:5000:5000"
     env:
       TZ: "{{ tz }}"
       VIRTUAL_HOST: "listarr.{{ user.domain }}"
       VIRTUAL_PORT: "5000"
       LETSENCRYPT_HOST: "listarr.{{ user.domain }}"
       LETSENCRYPT_EMAIL: "{{ user.email }}"
-    command: -P
     volumes:
       - "/opt/listarr:/server/config"
     labels:
