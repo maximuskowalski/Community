@@ -26,6 +26,7 @@
   with_items:
     - /opt/autoscan
     - /opt/autoscan/app/
+    - /opt/autoscan/sa/
 
 - name: "Check if '/opt/autoscan/app/config.yml' exists"
   stat:
@@ -65,6 +66,7 @@
       - "/opt/plex:/opt/plex:ro"
       - "/opt/emby:/opt/emby:ro"
       - "/mnt:/mnt:ro"
+      - "/opt/sa:/opt/sa"
     labels:
       "com.github.cloudbox.cloudbox_managed": "true"
     networks:
