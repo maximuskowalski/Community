@@ -58,6 +58,7 @@ environment:
     healthchecks
     heimdall
     influxdb
+    invitarr
     invoiceninja
     jdownloader2
     jellyfin
