@@ -33,8 +33,8 @@
     pull: yes
     env:
       TZ: "{{ tz }}"
-      PUID: "{{ uid }}"
-      PGID: "{{ gid }}"
+      #PUID: "{{ uid }}"
+      #PGID: "{{ gid }}"
       VIRTUAL_HOST: "invitarr.{{ user.domain }}"
       VIRTUAL_PORT: "5001"
       LETSENCRYPT_HOST: "invitarr.{{ user.domain }}"
