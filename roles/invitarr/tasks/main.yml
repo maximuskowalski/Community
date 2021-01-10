@@ -11,7 +11,7 @@
 ---
 - name: "Setting CloudFlare DNS Record"
   include_role:
-    name: invitarr
+    name: cloudflare-dns
   vars:
     record: invitarr
   when: cloudflare_enabled
