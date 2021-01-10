@@ -1,0 +1,53 @@
+#########################################################################
+# Title:            Community: Invitarr                                 #
+# Author(s):        Kowalski                                            #
+# URL:              https://github.com/Cloudbox/Community               #
+# Docker Image(s):  piratify/invitarr                                   #
+#                   https://www.github.com/Sleepingpirates/Invitarr     #
+#         Part of the Cloudbox project: https://cloudbox.works          #
+#########################################################################
+#                   GNU General Public License v3.0                     #
+#########################################################################
+---
+- name: "Setting CloudFlare DNS Record"
+  include_role:
+    name: invitarr
+  vars:
+    record: invitarr
+  when: cloudflare_enabled
+
+- name: Stop and remove any existing container
+  docker_container:
+    name: invitarr
+    state: absent
+
+- name: Create invitarr directories
+  file: "path={{ item }} state=directory mode=0775 owner={{ user.name }} group={{ user.name }}"
+  with_items:
+    - /opt/invitarr
+
+- name: Create and start container
+  docker_container:
+    name: invitarr
+    image: piratify/invitarr:latest
+    pull: yes
+    env:
+      TZ: "{{ tz }}"
+      PUID: "{{ uid }}"
+      PGID: "{{ gid }}"
+      VIRTUAL_HOST: "invitarr.{{ user.domain }}"
+      VIRTUAL_PORT: "5001"
+      LETSENCRYPT_HOST: "invitarr.{{ user.domain }}"
+      LETSENCRYPT_EMAIL: "{{ user.email }}"
+    volumes:
+      - "/opt/invitarr:/app/app/config"
+      - "/mnt:/mnt"
+    labels:
+      "com.github.cloudbox.cloudbox_managed": "true"
+    networks:
+      - name: cloudbox
+        aliases:
+          - invitarr
+    purge_networks: yes
+    restart_policy: unless-stopped
+    state: started
